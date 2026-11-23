@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════════════════════════
+   TOKENS DA MARCA: extraídos de independencianoalemao.de
+     night      fundo preto das seções do site (#000), levemente aquecido
+     paper      seções claras do site (#F7F7F7)
+     gold       dourado da bandeira, do favicon (#FECE00)
+     red        vermelho da bandeira, do favicon (#DF0000)
+     highlight  amarelo dos destaques em texto (#F5EE1A)
+     cta        verde dos botões de matrícula (#499E54) / hover (#3C8345)
+     ink        texto escuro do site (#000 / #4D4D4D)
+     muted      texto secundário (#696969)
+   A marca já é escura: a base é preto, com faixas claras (paper) para leitura.
+   ══════════════════════════════════════════════════════════════════════ */
+@theme {
+  --color-night: #0b0a09;
+  --color-night-2: #151311;
+  --color-night-3: #201d1a;
+  --color-paper: #f7f7f7;
+  --color-paper-2: #efede8;
+  --color-gold: #fece00;
+  --color-red: #df0000;
+  --color-highlight: #f5ee1a;
+  --color-cta: #499e54;
+  --color-cta-strong: #3c8345;
+  --color-ink: #141414;
+  --color-ink-2: #4d4d4d;
+  --color-muted: #696969;
+  --color-cream: #f4f1ea;
+  --color-fog: #b9b3aa;
+
+  --font-sans: var(--font-brand), system-ui, sans-serif;
+  --ease-cine: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  background: var(--color-night);
+  color: var(--color-cream);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+body {
+  background: var(--color-night);
+}
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+/* ── Utilitários da marca ── */
+@utility shadow-cta {
+  box-shadow: 0 18px 40px -16px color-mix(in srgb, var(--color-cta) 85%, transparent);
+}
+@utility shadow-deep {
+  box-shadow: 0 40px 100px -40px rgb(0 0 0 / 0.8);
+}
+/* Fio com as três cores da bandeira */
+@utility flag-line {
+  background-image: linear-gradient(90deg, #000 0 33.3%, var(--color-red) 33.3% 66.6%, var(--color-gold) 66.6% 100%);
+}
+@utility flag-line-v {
+  background-image: linear-gradient(180deg, #2a2724 0 33.3%, var(--color-red) 33.3% 66.6%, var(--color-gold) 66.6% 100%);
+}
+.text-gold-grad {
+  background: linear-gradient(100deg, var(--color-gold) 0%, var(--color-highlight) 55%, #fff4b0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Cinema: grão de filme + vinheta (sutis, fixos sobre a página) ── */
+.film-grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.075;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1.4 -0.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.9s steps(6) infinite;
+  mix-blend-mode: overlay;
+}
+.film-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  pointer-events: none;
+  background: radial-gradient(ellipse 120% 90% at 50% 45%, transparent 55%, rgb(0 0 0 / 0.38) 100%);
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -4%); }
+  60% { transform: translate(-4%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ── Movimento: entrada em CSS (roda antes da hidratação, bom para LCP) ── */
+@keyframes rise { from { transform: translateY(110%); } to { transform: translateY(0); } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes veil { from { opacity: 1; } to { opacity: 0; } }
+@keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes marquee-y { to { transform: translateY(-50%); } }
+@keyframes scroll-cue { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
+
+.word-mask { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.12em; }
+.word-mask > span {
+  display: inline-block;
+  animation: rise 1.2s var(--ease-cine) both;
+  animation-delay: calc(0.5s + var(--i) * 0.08s);
+}
+.fade-up { animation: fade-up 1.1s var(--ease-cine) both; animation-delay: var(--d, 0s); }
+.veil { animation: veil 1.8s var(--ease-cine) 0.05s both; }
+.marquee { animation: marquee 60s linear infinite; }
+.marquee-y { animation: marquee-y 50s linear infinite; }
+.scroll-cue { animation: scroll-cue 2.2s var(--ease-cine) infinite; }
+
+/* Barras de cinema (letterbox) no hero */
+.letterbox::before,
+.letterbox::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  background: #000;
+  z-index: 5;
+  animation: letterbox 1.6s var(--ease-cine) 0.1s both reverse;
+}
+.letterbox::before { top: 0; }
+.letterbox::after { bottom: 0; }
+@keyframes letterbox { from { height: 0; } to { height: 50%; } }
+
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .word-mask > span, .fade-up, .veil, .marquee, .marquee-y, .scroll-cue { animation: none; transform: none; }
+  .veil { opacity: 0; }
+  .film-grain { animation: none; }
+  .letterbox::before, .letterbox::after { animation: none; height: 0; }
+}
